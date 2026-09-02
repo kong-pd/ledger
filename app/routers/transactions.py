@@ -3,33 +3,35 @@
 ==============
 四个接口：Create / Read list / Update / Delete
 
-⚠️ 暂时硬编码 CURRENT_USER_ID = 1
-   第 ② 步加 JWT 后会替换成 get_current_user 依赖。
+所有路由都通过 get_current_user 获取当前登录用户，
+未登录请求会被自动拦截返回 401。
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Transaction
+from ..models import Transaction, User
 from ..schemas import TransactionCreate, TransactionUpdate, TransactionRead
+from ..auth import get_current_user
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
-
-# ---------- 临时：硬编码当前用户 ----------
-CURRENT_USER_ID = 1
 
 
 # ---------- C: 记一笔 ----------
 @router.post("/", response_model=TransactionRead, status_code=201)
-def create_transaction(payload: TransactionCreate, db: Session = Depends(get_db)):
+def create_transaction(
+    payload: TransactionCreate,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     txn = Transaction(
         **payload.model_dump(),
-        user_id=CURRENT_USER_ID,
+        user_id=user.id,          # ← 从 token 里拿到的真实用户
     )
     db.add(txn)
     db.commit()
-    db.refresh(txn)       # 拿回数据库生成的 id / created_at
+    db.refresh(txn)
     return txn
 
 
@@ -38,11 +40,12 @@ def create_transaction(payload: TransactionCreate, db: Session = Depends(get_db)
 def list_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     return (
         db.query(Transaction)
-        .filter(Transaction.user_id == CURRENT_USER_ID)
+        .filter(Transaction.user_id == user.id)
         .order_by(Transaction.date.desc())
         .offset(skip)
         .limit(limit)
@@ -55,17 +58,17 @@ def list_transactions(
 def update_transaction(
     txn_id: int,
     payload: TransactionUpdate,
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     txn = (
         db.query(Transaction)
-        .filter(Transaction.id == txn_id, Transaction.user_id == CURRENT_USER_ID)
+        .filter(Transaction.id == txn_id, Transaction.user_id == user.id)
         .first()
     )
     if not txn:
         raise HTTPException(404, "Transaction not found")
 
-    # 只更新用户传了的字段
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(txn, field, value)
 
@@ -76,10 +79,14 @@ def update_transaction(
 
 # ---------- D: 删一笔 ----------
 @router.delete("/{txn_id}", status_code=204)
-def delete_transaction(txn_id: int, db: Session = Depends(get_db)):
+def delete_transaction(
+    txn_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     txn = (
         db.query(Transaction)
-        .filter(Transaction.id == txn_id, Transaction.user_id == CURRENT_USER_ID)
+        .filter(Transaction.id == txn_id, Transaction.user_id == user.id)
         .first()
     )
     if not txn:

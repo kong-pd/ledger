@@ -18,6 +18,31 @@ from pydantic import BaseModel, ConfigDict
 from .models import TransactionType
 
 
+# ---------- Auth ----------
+
+class UserCreate(BaseModel):
+    """注册时用户需要传的字段"""
+    username: str
+    email: str
+    password: str          # 明文，后端会 hash 后再存
+
+
+class UserRead(BaseModel):
+    """返回给前端的用户信息（不含密码）"""
+    id: int
+    username: str
+    email: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Token(BaseModel):
+    """登录成功后返回的 token"""
+    access_token: str
+    token_type: str = "bearer"
+
+
 # ---------- Transaction ----------
 
 class TransactionCreate(BaseModel):
