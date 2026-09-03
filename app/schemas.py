@@ -43,6 +43,28 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
+# ---------- Category ----------
+
+class CategoryCreate(BaseModel):
+    name: str
+    type: TransactionType          # income 或 expense
+
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    type: Optional[TransactionType] = None
+
+
+class CategoryRead(BaseModel):
+    id: int
+    name: str
+    type: TransactionType
+    user_id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # ---------- Transaction ----------
 
 class TransactionCreate(BaseModel):
