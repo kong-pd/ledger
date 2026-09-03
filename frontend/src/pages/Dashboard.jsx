@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import TransactionForm from "../components/TransactionForm";
 import TransactionList from "../components/TransactionList";
+import MonthlyChart from "../components/MonthlyChart";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function Dashboard() {
       </div>
 
       <TransactionForm categories={categories} onSaved={load} />
+      <MonthlyChart key={transactions.length} />
       <TransactionList transactions={transactions} onDelete={load} />
     </div>
   );
