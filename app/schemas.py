@@ -65,6 +65,21 @@ class CategoryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+# ---------- Wallet ----------
+
+class WalletRead(BaseModel):
+    """钱包余额"""
+    balance: Decimal
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TopUpRequest(BaseModel):
+    """充值请求"""
+    amount: Decimal
+
+
 # ---------- Transaction ----------
 
 class TransactionCreate(BaseModel):

@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import User
+from ..models import User, Wallet
 from ..schemas import UserCreate, UserRead, Token
 from ..auth import hash_password, verify_password, create_access_token
 
@@ -36,6 +36,12 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
         hashed_password=hash_password(payload.password),  # 存哈希，不存明文
     )
     db.add(user)
+    db.flush()   # 拿到 user.id 但还没 commit
+
+    # 注册即开户：每个用户自动创建一个余额为 0 的钱包
+    wallet = Wallet(user_id=user.id)
+    db.add(wallet)
+
     db.commit()
     db.refresh(user)
     return user

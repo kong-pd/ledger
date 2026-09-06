@@ -20,7 +20,7 @@ from datetime import date, datetime
 
 from sqlalchemy import (
     Column, Integer, String, Numeric, Date, DateTime,
-    Enum, ForeignKey, Text,
+    Enum, ForeignKey, Text, CheckConstraint,
 )
 from sqlalchemy.orm import relationship
 
@@ -50,6 +50,32 @@ class User(Base):
     # back_populates 让双向都能走：user.categories ↔ category.owner
     categories = relationship("Category", back_populates="owner", cascade="all, delete-orphan")
     transactions = relationship("Transaction", back_populates="owner", cascade="all, delete-orphan")
+    wallet = relationship("Wallet", back_populates="owner", uselist=False, cascade="all, delete-orphan")
+
+
+# ---------- wallets ----------
+
+class Wallet(Base):
+    """
+    钱包 — 每个用户有且只有一个（一对一关系）
+
+    新概念：CheckConstraint
+      数据库层面强制 balance >= 0。
+      即使代码有 bug 试图扣成负数，数据库会直接拒绝这个操作。
+      这比在 Python 里写 if balance < 0 更安全，因为它防住了
+      所有入口（API、脚本、手动 SQL），不只是你写了检查的那个接口。
+    """
+    __tablename__ = "wallets"
+    __table_args__ = (
+        CheckConstraint("balance >= 0", name="ck_wallet_non_negative"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
+    balance = Column(Numeric(12, 2), nullable=False, default=0)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    owner = relationship("User", back_populates="wallet")
 
 
 # ---------- categories ----------
