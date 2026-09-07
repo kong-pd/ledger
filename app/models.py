@@ -24,6 +24,7 @@ class User(Base):
     username = Column(String(50), unique=True, nullable=False, index=True)
     email = Column(String(120), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
+    is_admin = Column(Integer, nullable=False, default=0)  # 0 = normal, 1 = admin
     created_at = Column(DateTime, default=datetime.utcnow)
 
     categories = relationship("Category", back_populates="owner", cascade="all, delete-orphan")
