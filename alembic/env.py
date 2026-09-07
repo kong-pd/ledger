@@ -18,7 +18,7 @@ if config.config_file_name is not None:
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from app.database import Base
-from app.models import User, Category, Transaction, Wallet   # noqa: F401  确保模型被加载
+from app.models import User, Category, Transaction, Wallet, LedgerEntry   # noqa: F401  确保模型被加载
 
 target_metadata = Base.metadata
 

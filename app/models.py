@@ -113,3 +113,41 @@ class Transaction(Base):
 
     owner = relationship("User", back_populates="transactions")
     category = relationship("Category", back_populates="transactions")
+
+
+# ---------- ledger_entries ----------
+
+class EntryDirection(str, enum.Enum):
+    """
+    debit  = 钱从这个用户出去（支出方）
+    credit = 钱进到这个用户账上（收入方）
+    """
+    debit = "debit"
+    credit = "credit"
+
+
+class LedgerEntry(Base):
+    """
+    复式记账流水
+
+    核心规则：每一笔钱的移动，同时产生两条 entry：
+      - 出钱的人：debit（借方）
+      - 收钱的人：credit（贷方）
+
+    好处：
+      1. 任何时候可以用 SUM(credit) - SUM(debit) 算出余额
+      2. 每一分钱都能追溯来源和去向
+      3. 如果全系统 SUM(debit) != SUM(credit)，说明有 bug
+    """
+    __tablename__ = "ledger_entries"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    direction = Column(Enum(EntryDirection), nullable=False)
+    amount = Column(Numeric(12, 2), nullable=False)   # 永远是正数
+    counterparty_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # 对方是谁，充值时为空
+    ref_type = Column(String(20), nullable=False)      # "topup" / "transfer"
+    note = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    owner = relationship("User", foreign_keys=[user_id])

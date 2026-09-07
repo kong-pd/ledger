@@ -80,6 +80,33 @@ class TopUpRequest(BaseModel):
     amount: Decimal
 
 
+class TransferRequest(BaseModel):
+    """转账请求"""
+    to_username: str       # 收款人用户名
+    amount: Decimal
+
+
+class TransferRead(BaseModel):
+    """转账结果"""
+    from_user: str
+    to_user: str
+    amount: Decimal
+    sender_balance: Decimal
+
+
+class LedgerEntryRead(BaseModel):
+    """流水记录"""
+    id: int
+    direction: str
+    amount: Decimal
+    counterparty_id: Optional[int]
+    ref_type: str
+    note: Optional[str]
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # ---------- Transaction ----------
 
 class TransactionCreate(BaseModel):
