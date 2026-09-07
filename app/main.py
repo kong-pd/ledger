@@ -5,7 +5,7 @@ FastAPI 入口
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import auth, categories, stats, transactions, wallet
+from .routers import auth, categories, orders, stats, transactions, wallet
 
 app = FastAPI(title="Personal Ledger", version="1.1.0")
 
@@ -23,6 +23,7 @@ app.include_router(categories.router)
 app.include_router(transactions.router)
 app.include_router(stats.router)
 app.include_router(wallet.router)
+app.include_router(orders.router)
 
 
 @app.get("/health")

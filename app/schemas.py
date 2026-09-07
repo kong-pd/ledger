@@ -114,3 +114,19 @@ class TransactionRead(BaseModel):
     category_id: Optional[int]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- Order ---
+
+class OrderCreate(BaseModel):
+    amount: Decimal
+
+
+class OrderRead(BaseModel):
+    id: int
+    amount: Decimal
+    status: str
+    gateway_ref: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+    model_config = ConfigDict(from_attributes=True)

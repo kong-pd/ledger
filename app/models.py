@@ -97,3 +97,35 @@ class LedgerEntry(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", foreign_keys=[user_id])
+
+
+# ---------- orders ----------
+
+class OrderStatus(str, enum.Enum):
+    pending = "pending"
+    processing = "processing"
+    completed = "completed"
+    failed = "failed"
+
+
+# Valid state transitions — the state machine
+ORDER_TRANSITIONS = {
+    OrderStatus.pending: {OrderStatus.processing, OrderStatus.failed},
+    OrderStatus.processing: {OrderStatus.completed, OrderStatus.failed},
+    OrderStatus.completed: set(),  # terminal
+    OrderStatus.failed: set(),     # terminal
+}
+
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    amount = Column(Numeric(12, 2), nullable=False)
+    status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.pending)
+    gateway_ref = Column(String(100), nullable=True)  # reference from mock gateway
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    owner = relationship("User", foreign_keys=[user_id])
