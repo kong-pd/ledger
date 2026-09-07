@@ -1,0 +1,102 @@
+<mxfile host="app.diagrams.net" agent="manual">
+  <diagram id="arch" name="System Architecture">
+    <mxGraphModel dx="1373" dy="756" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=16;fontStyle=1;align=center;verticalAlign=middle;" value="System Architecture" vertex="1">
+          <mxGeometry height="30" width="350" x="175" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_layer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=13;" value="Presentation Layer" vertex="1">
+          <mxGeometry height="100" width="460" x="120" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_react" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="React + Vite&#xa;:5173" vertex="1">
+          <mxGeometry height="45" width="110" x="150" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_pages" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="Login | Dashboard | Chart" vertex="1">
+          <mxGeometry height="45" width="170" x="290" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_fe_be" edge="1" parent="1" style="endArrow=classic;html=1;fontSize=11;" value="HTTP + JWT">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="175" as="sourcePoint" />
+            <mxPoint x="350" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="be_layer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=13;" value="Application Layer" vertex="1">
+          <mxGeometry height="220" width="460" x="120" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="be_main" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" value="FastAPI&#xa;:8000" vertex="1">
+          <mxGeometry height="45" width="90" x="150" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="be_auth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/auth" vertex="1">
+          <mxGeometry height="35" width="80" x="260" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="be_txn" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/transactions" vertex="1">
+          <mxGeometry height="35" width="100" x="355" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="be_cat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/categories" vertex="1">
+          <mxGeometry height="35" width="90" x="470" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="be_wallet" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/wallet" vertex="1">
+          <mxGeometry height="35" width="80" x="260" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="be_stats" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/stats" vertex="1">
+          <mxGeometry height="35" width="100" x="355" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="be_orders" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/orders" vertex="1">
+          <mxGeometry height="35" width="90" x="470" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="be_mid" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="JWT + bcrypt | SQLAlchemy ORM | Pydantic | Alembic" vertex="1">
+          <mxGeometry height="30" width="310" x="150" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="be_webhook" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="/webhook&#xa;/payment" vertex="1">
+          <mxGeometry height="40" width="90" x="150" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_be_db" edge="1" parent="1" style="endArrow=classic;html=1;fontSize=11;" value="SQL">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="455" as="sourcePoint" />
+            <mxPoint x="350" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="db_layer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=13;" value="Data Layer" vertex="1">
+          <mxGeometry height="110" width="460" x="120" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="db_main" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;size=10;" value="SQLite&#xa;ledger.db" vertex="1">
+          <mxGeometry height="55" width="90" x="150" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="db_tables" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" value="users | wallets | ledger_entries&#xa;transactions | categories | orders" vertex="1">
+          <mxGeometry height="45" width="220" x="270" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_layer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;fontStyle=1;fontSize=13;" value="Mock Payment Gateway" vertex="1">
+          <mxGeometry height="180" width="160" x="620" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_main" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" value="FastAPI&#xa;:9000" vertex="1">
+          <mxGeometry height="40" width="110" x="645" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_flow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" value="POST /pay&#xa;→ delay 3s&#xa;→ sign + callback" vertex="1">
+          <mxGeometry height="55" width="110" x="645" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow_be_gw" edge="1" parent="1" source="be_orders" style="endArrow=classic;html=1;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="pay request">
+          <mxGeometry relative="1" x="0.0288" y="4" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="565" y="310" as="sourcePoint" />
+            <mxPoint x="640" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow_gw_wh" edge="1" parent="1" style="endArrow=classic;html=1;fontSize=10;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="be_webhook" value="webhook callback">
+          <mxGeometry relative="1" x="-0.3249" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="590" y="390" />
+              <mxPoint x="590" y="480" />
+              <mxPoint x="340" y="480" />
+              <mxPoint x="175" y="480" />
+            </Array>
+            <mxPoint x="620" y="390" as="sourcePoint" />
+            <mxPoint x="225" y="365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
