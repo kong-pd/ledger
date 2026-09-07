@@ -1,13 +1,4 @@
-"""
-钱包路由
-========
-GET  /wallet           → 查看余额
-POST /wallet/topup     → 模拟充值
-POST /wallet/transfer  → 用户间转账
-GET  /wallet/history   → 流水记录
-
-Step 8: 每次余额变动都会同时写入 ledger_entries（复式记账）。
-"""
+"""Wallet routes — balance, top-up, transfer, ledger history."""
 
 from decimal import Decimal
 
@@ -50,10 +41,7 @@ def topup(
     if not wallet:
         raise HTTPException(404, "Wallet not found")
 
-    # 改余额
     wallet.balance = wallet.balance + payload.amount
-
-    # 写流水：充值只有一条 credit（钱进来）
     db.add(LedgerEntry(
         user_id=user.id,
         direction=EntryDirection.credit,
@@ -88,26 +76,19 @@ def transfer(
     if sender_wallet.balance < payload.amount:
         raise HTTPException(400, "Insufficient balance")
 
-    # 改余额
+    # Atomic: both balance updates + both ledger entries share one commit
     sender_wallet.balance = sender_wallet.balance - payload.amount
     receiver_wallet.balance = receiver_wallet.balance + payload.amount
 
-    # 写流水：转账产生两条 entry（一出一进）
     db.add(LedgerEntry(
-        user_id=user.id,
-        direction=EntryDirection.debit,
-        amount=payload.amount,
-        counterparty_id=receiver.id,
-        ref_type="transfer",
-        note=f"Transfer to {receiver.username}",
+        user_id=user.id, direction=EntryDirection.debit,
+        amount=payload.amount, counterparty_id=receiver.id,
+        ref_type="transfer", note=f"Transfer to {receiver.username}",
     ))
     db.add(LedgerEntry(
-        user_id=receiver.id,
-        direction=EntryDirection.credit,
-        amount=payload.amount,
-        counterparty_id=user.id,
-        ref_type="transfer",
-        note=f"Transfer from {user.username}",
+        user_id=receiver.id, direction=EntryDirection.credit,
+        amount=payload.amount, counterparty_id=user.id,
+        ref_type="transfer", note=f"Transfer from {user.username}",
     ))
 
     try:
@@ -117,7 +98,6 @@ def transfer(
         raise HTTPException(500, "Transfer failed")
 
     db.refresh(sender_wallet)
-
     return {
         "from_user": user.username,
         "to_user": receiver.username,

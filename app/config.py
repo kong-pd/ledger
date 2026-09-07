@@ -1,9 +1,4 @@
-"""
-应用配置
---------
-SECRET_KEY 用来签发和验证 JWT。
-生产环境应该从环境变量读，这里先硬编码方便开发。
-"""
+"""App configuration. In production, read SECRET_KEY from env vars."""
 
 SECRET_KEY = "dev-secret-change-me-in-production"
 ALGORITHM = "HS256"

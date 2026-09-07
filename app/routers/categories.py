@@ -1,16 +1,6 @@
-"""
-分类 CRUD 路由
-==============
-用户可以自建分类（如 "餐饮"、"工资"），记账时关联。
+"""Category CRUD routes."""
 
-这一步的关系建模重点：
-  删分类时，已关联的交易怎么办？
-  → models.py 里设了 ondelete="SET NULL"
-  → 所以删分类后，那些交易的 category_id 变成 NULL（未分类）
-  → 交易本身不会丢
-"""
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -39,12 +29,7 @@ def list_categories(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    return (
-        db.query(Category)
-        .filter(Category.user_id == user.id)
-        .order_by(Category.name)
-        .all()
-    )
+    return db.query(Category).filter(Category.user_id == user.id).order_by(Category.name).all()
 
 
 @router.patch("/{cat_id}", response_model=CategoryRead)
@@ -54,11 +39,7 @@ def update_category(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    cat = (
-        db.query(Category)
-        .filter(Category.id == cat_id, Category.user_id == user.id)
-        .first()
-    )
+    cat = db.query(Category).filter(Category.id == cat_id, Category.user_id == user.id).first()
     if not cat:
         raise HTTPException(404, "Category not found")
 
@@ -76,11 +57,7 @@ def delete_category(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    cat = (
-        db.query(Category)
-        .filter(Category.id == cat_id, Category.user_id == user.id)
-        .first()
-    )
+    cat = db.query(Category).filter(Category.id == cat_id, Category.user_id == user.id).first()
     if not cat:
         raise HTTPException(404, "Category not found")
 

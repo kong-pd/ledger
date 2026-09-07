@@ -1,13 +1,4 @@
-"""
-Pydantic Schemas — 请求体 & 响应体
-===================================
-ORM Model  = 数据库长什么样
-Schema     = API 进出的 JSON 长什么样
-
-分成 Create（写入）和 Read（读出）两套：
-  - Create 只包含用户需要提供的字段
-  - Read  多了 id, created_at 等数据库自动生成的字段
-"""
+"""Pydantic schemas — request/response validation."""
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -18,36 +9,32 @@ from pydantic import BaseModel, ConfigDict
 from .models import TransactionType
 
 
-# ---------- Auth ----------
+# --- Auth ---
 
 class UserCreate(BaseModel):
-    """注册时用户需要传的字段"""
     username: str
     email: str
-    password: str          # 明文，后端会 hash 后再存
+    password: str
 
 
 class UserRead(BaseModel):
-    """返回给前端的用户信息（不含密码）"""
     id: int
     username: str
     email: str
     created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):
-    """登录成功后返回的 token"""
     access_token: str
     token_type: str = "bearer"
 
 
-# ---------- Category ----------
+# --- Category ---
 
 class CategoryCreate(BaseModel):
     name: str
-    type: TransactionType          # income 或 expense
+    type: TransactionType
 
 
 class CategoryUpdate(BaseModel):
@@ -61,33 +48,27 @@ class CategoryRead(BaseModel):
     type: TransactionType
     user_id: int
     created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Wallet ----------
+# --- Wallet ---
 
 class WalletRead(BaseModel):
-    """钱包余额"""
     balance: Decimal
     updated_at: Optional[datetime] = None
-
     model_config = ConfigDict(from_attributes=True)
 
 
 class TopUpRequest(BaseModel):
-    """充值请求"""
     amount: Decimal
 
 
 class TransferRequest(BaseModel):
-    """转账请求"""
-    to_username: str       # 收款人用户名
+    to_username: str
     amount: Decimal
 
 
 class TransferRead(BaseModel):
-    """转账结果"""
     from_user: str
     to_user: str
     amount: Decimal
@@ -95,7 +76,6 @@ class TransferRead(BaseModel):
 
 
 class LedgerEntryRead(BaseModel):
-    """流水记录"""
     id: int
     direction: str
     amount: Decimal
@@ -103,14 +83,12 @@ class LedgerEntryRead(BaseModel):
     ref_type: str
     note: Optional[str]
     created_at: datetime
-
     model_config = ConfigDict(from_attributes=True)
 
 
-# ---------- Transaction ----------
+# --- Transaction ---
 
 class TransactionCreate(BaseModel):
-    """新建交易时，用户需要传的字段"""
     amount: Decimal
     type: TransactionType
     note: Optional[str] = None
@@ -119,7 +97,6 @@ class TransactionCreate(BaseModel):
 
 
 class TransactionUpdate(BaseModel):
-    """更新交易：所有字段都可选，只传想改的"""
     amount: Optional[Decimal] = None
     type: Optional[TransactionType] = None
     note: Optional[str] = None
@@ -128,7 +105,6 @@ class TransactionUpdate(BaseModel):
 
 
 class TransactionRead(BaseModel):
-    """返回给前端的交易数据"""
     id: int
     amount: Decimal
     type: TransactionType
@@ -137,6 +113,4 @@ class TransactionRead(BaseModel):
     user_id: int
     category_id: Optional[int]
     created_at: datetime
-
-    # 让 Pydantic 直接从 ORM 对象读属性，不需要手动转 dict
     model_config = ConfigDict(from_attributes=True)
