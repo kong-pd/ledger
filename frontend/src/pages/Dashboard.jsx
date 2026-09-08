@@ -9,15 +9,18 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const load = async () => {
     try {
-      const [txRes, catRes] = await Promise.all([
+      const [txRes, catRes, meRes] = await Promise.all([
         api.get("/transactions/"),
         api.get("/categories/"),
+        api.get("/auth/me"),
       ]);
       setTransactions(txRes.data);
       setCategories(catRes.data);
+      setIsAdmin(meRes.data.is_admin);
     } catch {
       // token 失效 → 回登录页
       localStorage.removeItem("token");
@@ -38,6 +41,7 @@ export default function Dashboard() {
         <h1 style={{ margin: 0 }}>Ledger</h1>
         <div style={{ display: "flex", gap: 8 }}>
           <Link to="/wallet" style={logoutBtn}>Wallet</Link>
+          {isAdmin && <Link to="/admin" style={logoutBtn}>Admin</Link>}
           <button onClick={logout} style={logoutBtn}>Logout</button>
         </div>
       </div>
