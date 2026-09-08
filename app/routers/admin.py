@@ -31,6 +31,7 @@ def list_users(
             "username": u.username,
             "email": u.email,
             "is_admin": bool(u.is_admin),
+            "is_banned": bool(u.is_banned),
             "created_at": u.created_at,
             "wallet_balance": float(u.wallet.balance) if u.wallet else None,
         }
@@ -54,10 +55,30 @@ def get_user(
         "username": user.username,
         "email": user.email,
         "is_admin": bool(user.is_admin),
+        "is_banned": bool(user.is_banned),
         "created_at": user.created_at,
         "wallet_balance": float(user.wallet.balance) if user.wallet else None,
         "order_count": orders,
     }
+
+
+@router.patch("/users/{user_id}/ban")
+def toggle_ban(
+    user_id: int,
+    admin: User = Depends(get_admin_user),
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    if user.id == admin.id:
+        raise HTTPException(400, "Cannot ban yourself")
+    if user.is_admin:
+        raise HTTPException(400, "Cannot ban another admin")
+
+    user.is_banned = 0 if user.is_banned else 1
+    db.commit()
+    return {"id": user.id, "username": user.username, "is_banned": bool(user.is_banned)}
 
 
 @router.patch("/users/{user_id}/toggle-admin")

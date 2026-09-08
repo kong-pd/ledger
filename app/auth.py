@@ -48,4 +48,6 @@ def get_current_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise credentials_exception
+    if user.is_banned:
+        raise HTTPException(status_code=403, detail="Account suspended")
     return user
