@@ -5,3 +5,4 @@ body { background: #f7f8fa; font-family: 'Outfit', sans-serif; color: #0f172a; }
 input, button, select { font-family: 'Outfit', sans-serif; }
 a { color: #94a3b8; text-decoration: none; }
 a:hover { color: #0f172a; }
+@keyframes spin { to { transform: rotate(360deg); } }
