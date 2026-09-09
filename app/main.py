@@ -2,6 +2,8 @@
 FastAPI 入口
 """
 
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,10 +11,11 @@ from .routers import admin, auth, categories, orders, stats, transactions, walle
 
 app = FastAPI(title="Personal Ledger", version="1.1.0")
 
-# React dev server runs on :5173, allow it to call our API
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[FRONTEND_URL, "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

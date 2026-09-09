@@ -15,12 +15,19 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # 导入我们的 Base 和所有模型，Alembic 才能"看到"表结构
-import sys, pathlib
+import sys, pathlib, os
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from app.database import Base
-from app.models import User, Category, Transaction, Wallet, LedgerEntry, Order   # noqa: F401  确保模型被加载
+from app.models import User, Category, Transaction, Wallet, LedgerEntry, Order
 
 target_metadata = Base.metadata
+
+# Override sqlalchemy.url from environment if available
+db_url = os.environ.get("DATABASE_URL", "")
+if db_url:
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+    config.set_main_option("sqlalchemy.url", db_url)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
