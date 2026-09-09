@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import admin, auth, categories, orders, stats, transactions, wallet, webhook
 
-app = FastAPI(title="Personal Ledger", version="1.1.0")
+app = FastAPI(title="Personal Ledger", version="1.2.0")
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
