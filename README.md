@@ -1,12 +1,21 @@
 # Ledger
 
-**[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
-
 Personal finance and e-wallet app with a mock payment gateway.
 
 Wallet transfers are atomic, ledger uses double-entry bookkeeping, and payment webhooks are HMAC-signed.
 
-Built with FastAPI, React, and SQLite.
+Built with FastAPI, React, and SQLite/PostgreSQL.
+
+**[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
+
+> Free tier backend may take ~30s to wake up on first request.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Login](./docx/landing%20page.png) | ![Dashboard](./docx/dashboard.png) |
+| ![Wallet](./docx/wallet.png) | ![Admin](./docx/admin.png) |
 
 ## Architecture
 
@@ -52,7 +61,7 @@ API docs at http://localhost:8000/docs
 
 ## Stack
 
-**Backend:** Python · FastAPI · SQLAlchemy · Alembic · SQLite · PyJWT · bcrypt · httpx
+**Backend:** Python · FastAPI · SQLAlchemy · Alembic · PostgreSQL · PyJWT · bcrypt · httpx
 
 **Frontend:** React · Vite · Axios · Recharts
 
