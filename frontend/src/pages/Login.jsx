@@ -1,13 +1,21 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isRegister, setIsRegister] = useState(false);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const expired = searchParams.get("expired");
+  const returnTo = searchParams.get("return") || "/";
+
+  useEffect(() => {
+    if (expired) setError("Session expired — please sign in again");
+  }, [expired]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +31,7 @@ export default function Login() {
       }
       const { data } = await api.post("/auth/login", form);
       localStorage.setItem("token", data.access_token);
-      navigate("/");
+      navigate(returnTo);
     } catch (err) {
       setError(err.response?.data?.detail || "Something went wrong");
     }
@@ -65,7 +73,7 @@ export default function Login() {
 
         <div style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#94a3b8" }}>
           {isRegister ? "Already have an account?" : "No account?"}{" "}
-          <span onClick={() => { setIsRegister(!isRegister); setError(""); }}
+          <span onClick={() => { setIsRegister(!isRegister); setError(""); setSuccess(""); }}
             style={{ color: "#0ea5e9", cursor: "pointer", fontWeight: 500 }}>
             {isRegister ? "Sign in" : "Register"}
           </span>

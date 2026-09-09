@@ -4,8 +4,6 @@ Personal finance and e-wallet app with a mock payment gateway.
 
 Wallet transfers are atomic, ledger uses double-entry bookkeeping, and payment webhooks are HMAC-signed.
 
-Built with FastAPI, React, and SQLite/PostgreSQL.
-
 **[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
 
 Free tier backend may take around 30s to wake up on first request.
