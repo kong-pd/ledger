@@ -6,7 +6,7 @@ I built this to practice designing a payment flow end-to-end — the wallet uses
 
 **[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
 
-The backend is on Render's free tier, so the first request may take ~30s to wake up.
+The backend is on Render's free tier, so the first request may take around 30s to wake up.
 
 ## Screenshots
 
