@@ -7,12 +7,20 @@ export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     try {
-      if (isRegister) await api.post("/auth/register", form);
+      if (isRegister) {
+        await api.post("/auth/register", form);
+        setSuccess("Account created — sign in below");
+        setIsRegister(false);
+        setForm({ ...form, email: "" });
+        return;
+      }
       const { data } = await api.post("/auth/login", form);
       localStorage.setItem("token", data.access_token);
       navigate("/");
@@ -48,6 +56,7 @@ export default function Login() {
           </div>
 
           {error && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 16, textAlign: "center" }}>{error}</div>}
+          {success && <div style={{ color: "#059669", fontSize: 13, marginBottom: 16, textAlign: "center" }}>{success}</div>}
 
           <button type="submit" style={btnStyle}>
             {isRegister ? "Create account" : "Sign in"}
