@@ -1,27 +1,27 @@
 # Ledger
 
-Personal finance and e-wallet app with a mock payment gateway.
+A full-stack personal finance app where users can track income/expenses, top up an e-wallet, and make P2P transfers through a mock payment gateway.
 
-Wallet transfers are atomic, ledger uses double-entry bookkeeping, and payment webhooks are HMAC-signed.
+I built this to practice designing a payment flow end-to-end — the wallet uses double-entry bookkeeping so balances stay consistent, and the gateway communicates back via HMAC-signed webhooks.
 
 **[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
 
-Free tier backend may take around 30s to wake up on first request.
+The backend is on Render's free tier, so the first request may take ~30s to wake up.
 
 ## Screenshots
 
 | | |
 |---|---|
-| ![Login](./docx/landing%20page.png) | ![Dashboard](./docx/dashboard.png) |
-| ![Wallet](./docx/wallet.png) | ![Admin](./docx/admin.png) |
+| [![Login](docx/landing%20page.png)](docx/landing%20page.png) | [![Dashboard](docx/dashboard.png)](docx/dashboard.png) |
+| [![Wallet](docx/wallet.png)](docx/wallet.png) | [![Admin](docx/admin.png)](docx/admin.png) |
 
 ## Architecture
 
-![System Architecture](./docx/architecture.png)
+[![System Architecture](docx/architecture.png)](docx/architecture.png)
 
-## Payment flow
+## Payment Flow
 
-![Payment Sequence](./docx/payment-sequence.png)
+[![Payment Sequence](docx/payment-sequence.png)](docx/payment-sequence.png)
 
 ## Setup
 
@@ -44,7 +44,7 @@ API docs at http://localhost:8000/docs
 ## API
 
 | Method | Endpoint | Auth | Description |
-| ------ | -------- | ---- | ----------- |
+|---|---|---|---|
 | POST | /auth/register | — | Create account |
 | POST | /auth/login | — | Get JWT token |
 | GET/POST/PATCH/DELETE | /transactions/* | JWT | Bookkeeping CRUD |
@@ -54,7 +54,7 @@ API docs at http://localhost:8000/docs
 | POST | /wallet/transfer | JWT | P2P transfer |
 | GET | /wallet/history | JWT | Ledger entries |
 | GET/POST | /orders/* | JWT | Payment orders |
-| POST | /webhook/payment | — | Gateway callback (HMAC verified) |
+| POST | /webhook/payment | — | Gateway callback (HMAC-verified) |
 | GET/PATCH/DELETE | /admin/* | Admin | User management |
 
 ## Stack
