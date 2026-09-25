@@ -1,8 +1,8 @@
 # Ledger
 
-A full-stack personal finance app where users can track income/expenses, top up an e-wallet, and make P2P transfers through a mock payment gateway.
+A full-stack personal finance app where users can track income/expenses, top up an e-wallet, and make P2P transfers with Stripe Checkout integration.
 
-I built this to practice designing a payment flow end-to-end — the wallet uses double-entry bookkeeping so balances stay consistent, and the gateway communicates back via HMAC-signed webhooks.
+I built this to practice designing a payment flow end-to-end — the wallet uses double-entry bookkeeping so balances stay consistent, Stripe handles payments via redirect-based checkout, and webhooks keep order state in sync. Concurrency is managed with SELECT ... FOR UPDATE locking, idempotency keys, and rate limiting.
 
 **[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
 
@@ -19,9 +19,9 @@ The backend is on Render's free tier, so the first request may take around 30s t
 
 [![System Architecture](docx/architecture.png)](docx/architecture.png)
 
-## Payment Flow
+## Stripe Checkout
 
-[![Payment Sequence](docx/payment-sequence.png)](docx/payment-sequence.png)
+[![Stripe Checkout](docx/checkout.png)](docx/checkout.png)
 
 ## Setup
 
@@ -54,16 +54,14 @@ API docs at http://localhost:8000/docs
 | POST | /wallet/transfer | JWT | P2P transfer |
 | GET | /wallet/history | JWT | Ledger entries |
 | GET/POST | /orders/* | JWT | Payment orders |
-| POST | /webhook/payment | — | Gateway callback (HMAC-verified) |
+| POST | /webhook/stripe | — | Stripe webhook (signature-verified) |
 | GET/PATCH/DELETE | /admin/* | Admin | User management |
 
 ## Stack
 
-**Backend:** Python · FastAPI · SQLAlchemy · Alembic · PostgreSQL · PyJWT · bcrypt · httpx
+**Backend:** Python · FastAPI · SQLAlchemy · Alembic · PostgreSQL · PyJWT · bcrypt · Stripe · slowapi · tenacity
 
 **Frontend:** React · Vite · Axios · Recharts
-
-**Gateway:** Separate FastAPI service with HMAC-SHA256 webhook signing
 
 ## License
 
