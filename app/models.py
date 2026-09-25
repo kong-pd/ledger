@@ -1,11 +1,12 @@
 """ORM models — users, categories, transactions, wallets, ledger entries."""
 
 import enum
+import uuid
 from datetime import date, datetime
 
 from sqlalchemy import (
     Column, Integer, String, Numeric, Date, DateTime,
-    Enum, ForeignKey, Text, CheckConstraint,
+    Enum, ForeignKey, Text, CheckConstraint, Index,
 )
 from sqlalchemy.orm import relationship
 
@@ -121,13 +122,37 @@ ORDER_TRANSITIONS = {
 
 class Order(Base):
     __tablename__ = "orders"
+    __table_args__ = (
+        Index("ix_orders_idempotency_key", "idempotency_key", unique=True),
+        Index("ix_orders_stripe_session_id", "stripe_session_id"),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
+    currency = Column(String(3), nullable=False, default="myr")
     status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.pending)
-    gateway_ref = Column(String(100), nullable=True)  # reference from mock gateway
+    gateway_ref = Column(String(100), nullable=True)          # legacy mock ref
+    stripe_session_id = Column(String(255), nullable=True)     # cs_test_...
+    stripe_payment_intent_id = Column(String(255), nullable=True)  # pi_...
+    idempotency_key = Column(String(64), nullable=True, unique=True)  # client-supplied
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner = relationship("User", foreign_keys=[user_id])
+
+
+class IdempotencyRecord(Base):
+    """
+    Generic idempotency store.
+    Stores the HTTP response for a given key so that retries return the same result.
+    Keys expire after 24 hours.
+    """
+    __tablename__ = "idempotency_records"
+
+    key = Column(String(64), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    request_path = Column(String(255), nullable=False)
+    response_code = Column(Integer, nullable=False)
+    response_body = Column(Text, nullable=False)  # JSON string
+    created_at = Column(DateTime, default=datetime.utcnow)

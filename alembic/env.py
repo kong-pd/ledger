@@ -14,11 +14,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# 导入我们的 Base 和所有模型，Alembic 才能"看到"表结构
 import sys, pathlib, os
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from app.database import Base
-from app.models import User, Category, Transaction, Wallet, LedgerEntry, Order
+from app.models import User, Category, Transaction, Wallet, LedgerEntry, Order, IdempotencyRecord
 
 target_metadata = Base.metadata
 

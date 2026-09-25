@@ -66,18 +66,48 @@ export default function Wallet() {
     }
   };
 
+  // Check URL params on mount for Stripe redirect results
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentResult = params.get("payment");
+    const orderId = params.get("order_id");
+
+    if (paymentResult === "success" && orderId) {
+      setFeedback({ type: "success", msg: `Payment completed! Order #${orderId} processed.` });
+      // Clean URL params
+      window.history.replaceState({}, "", "/wallet");
+    } else if (paymentResult === "cancelled") {
+      setFeedback({ type: "error", msg: "Payment was cancelled." });
+      window.history.replaceState({}, "", "/wallet");
+    }
+  }, []);
+
   const handlePay = async () => {
     setFeedback(null);
     setPaymentStatus("processing");
+
+    // Generate an idempotency key to prevent duplicate orders on retry
+    const idempotencyKey = `pay_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
     try {
-      const { data } = await api.post("/orders/", { amount: parseFloat(payAmt) });
+      const { data } = await api.post(
+        "/orders/",
+        { amount: parseFloat(payAmt) },
+        { headers: { "Idempotency-Key": idempotencyKey } }
+      );
       setPayAmt("");
       setAction(null);
 
-      // Poll order status every second
+      // Redirect to Stripe Checkout
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+        return;
+      }
+
+      // Fallback: poll order status (for non-Stripe / legacy mode)
       pollRef.current = setInterval(async () => {
         try {
-          const res = await api.get(`/orders/${data.id}`);
+          const res = await api.get(`/orders/${data.order_id || data.id}`);
           const status = res.data.status;
           if (status === "completed") {
             clearInterval(pollRef.current);
@@ -199,7 +229,7 @@ export default function Wallet() {
           <div style={formCard}>
             <div style={formTitle}>Payment</div>
             <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 14 }}>
-              Simulate a payment via the gateway. Takes ~3 seconds to process.
+              Pay via Stripe (test mode). You'll be redirected to checkout.
             </div>
             <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
               <div style={{ flex: 1 }}>

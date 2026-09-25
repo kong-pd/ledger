@@ -120,13 +120,25 @@ class TransactionRead(BaseModel):
 
 class OrderCreate(BaseModel):
     amount: Decimal
+    currency: str = "myr"
 
 
 class OrderRead(BaseModel):
     id: int
     amount: Decimal
+    currency: str
     status: str
     gateway_ref: Optional[str]
+    stripe_session_id: Optional[str]
+    stripe_payment_intent_id: Optional[str]
+    idempotency_key: Optional[str]
     created_at: datetime
     updated_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+class StripeCheckoutResponse(BaseModel):
+    """Returned to frontend — contains the Stripe URL to redirect to."""
+    order_id: int
+    checkout_url: str
+    stripe_session_id: str
