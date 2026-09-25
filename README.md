@@ -1,8 +1,9 @@
 # Ledger
 
-A full-stack personal finance app where users can track income/expenses, top up an e-wallet, and make P2P transfers with Stripe Checkout integration.
+Ledger is a Personal finance app, users can track income/expenses, top up a wallet, and send money to each other. Payments go through Stripe Checkout (test mode). The wallet uses double-entry bookkeeping, and the payment pipeline handles idempotency and webhook signature verification to keep things consistent and to prevent duplicate charges. Payment orders follow a state machine (pending → processing → completed/failed) with Stripe confirming results via signed webhooks.
 
-I built this to practice designing a payment flow end-to-end — the wallet uses double-entry bookkeeping so balances stay consistent, Stripe handles payments via redirect-based checkout, and webhooks keep order state in sync. Concurrency is managed with SELECT ... FOR UPDATE locking, idempotency keys, and rate limiting.
+In desgin, the wallet uses double-entry bookkeeping so balances stay consistent, Stripe handles payments via redirect-based checkout, and webhooks keep order state in sync. Concurrency is managed with SELECT ... FOR UPDATE locking, idempotency keys, and rate limiting.
+
 
 **[Live Demo](https://ledger-delta-seven.vercel.app)** · [API Docs](https://ledger-api-3jgm.onrender.com/docs)
 
