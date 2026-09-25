@@ -14,14 +14,11 @@ The backend is on Render's free tier, so the first request may take around 30s t
 |---|---|
 | [![Login](docx/landing%20page.png)](docx/landing%20page.png) | [![Dashboard](docx/dashboard.png)](docx/dashboard.png) |
 | [![Wallet](docx/wallet.png)](docx/wallet.png) | [![Admin](docx/admin.png)](docx/admin.png) |
+| [![Checkout](docx/checkout.png)](docx/checkout.png) | |
 
 ## Architecture
 
 [![System Architecture](docx/architecture.png)](docx/architecture.png)
-
-## Stripe Checkout
-
-[![Stripe Checkout](docx/checkout.png)](docx/checkout.png)
 
 ## Setup
 
